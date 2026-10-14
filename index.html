@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Video Shrinker</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='7' width='19' height='18' rx='4' fill='%23c2603c'/%3E%3Cpath d='M22 13l7-4v14l-7-4z' fill='%23c2603c'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "mediabunny": "./vendor/mediabunny-1.60.0.min.mjs",
+        "mediabunny-aac-encoder": "./vendor/mediabunny-aac-encoder-1.60.0.min.mjs"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Video Shrinker</h1>
+      <p class="muted">Turns long iPhone videos into small MP4 files you can upload to Claude for research. Everything runs on your device; the video is never uploaded anywhere.</p>
+    </header>
+
+    <label id="drop" class="drop">
+      <input id="file" type="file" accept="video/*,.mov,.mp4,.m4v">
+      <span class="drop-title">Choose a video</span>
+      <span class="muted">or drop one here</span>
+    </label>
+
+    <p id="error" class="error" hidden></p>
+
+    <section id="source" class="card" hidden></section>
+
+    <section id="settings" class="card" hidden>
+      <h2>Settings</h2>
+      <div class="grid">
+        <label>Max size per file
+          <select id="size">
+            <option value="30" selected>30 MB (Claude upload)</option>
+            <option value="20">20 MB</option>
+            <option value="50">50 MB</option>
+            <option value="100">100 MB</option>
+            <option value="250">250 MB</option>
+            <option value="500">500 MB</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </label>
+        <label id="customWrap" hidden>Custom size (MB)
+          <input id="customSize" type="number" min="1" step="1" value="30" inputmode="numeric">
+        </label>
+        <label>Split into
+          <select id="parts">
+            <option value="1" selected>1 file</option>
+            <option value="auto">Auto (best quality)</option>
+            <option value="2">2 files</option>
+            <option value="3">3 files</option>
+            <option value="4">4 files</option>
+            <option value="6">6 files</option>
+            <option value="8">8 files</option>
+            <option value="10">10 files</option>
+          </select>
+        </label>
+        <label>Priority
+          <select id="priority">
+            <option value="detail" selected>Sharpest frames (best for AI)</option>
+            <option value="balanced">Balanced</option>
+            <option value="smooth">Smooth motion</option>
+          </select>
+        </label>
+        <label>Audio
+          <select id="audio">
+            <option value="speech" selected>Speech (mono, small)</option>
+            <option value="music">Full (stereo)</option>
+            <option value="none">No audio</option>
+          </select>
+        </label>
+        <label>Start at
+          <input id="trimStart" type="text" placeholder="0:00" inputmode="numeric" autocomplete="off">
+        </label>
+        <label>End at
+          <input id="trimEnd" type="text" placeholder="end" inputmode="numeric" autocomplete="off">
+        </label>
+      </div>
+
+      <div id="plan" class="plan"></div>
+
+      <div class="actions">
+        <button id="convert" type="button">Convert</button>
+        <button id="cancel" type="button" class="secondary" hidden>Cancel</button>
+      </div>
+      <div id="progress" hidden>
+        <progress id="bar" max="1" value="0"></progress>
+        <p id="progressText" class="muted" aria-live="polite"></p>
+        <p class="muted small">Keep this tab open and your screen on until it finishes.</p>
+      </div>
+    </section>
+
+    <section id="results" class="card" hidden>
+      <h2>Your files</h2>
+      <ul id="resultList" class="results"></ul>
+    </section>
+
+    <details class="card about">
+      <summary>How it keeps quality high</summary>
+      <ul>
+        <li>It works out the exact bitrate your size limit allows, then picks the resolution and frame rate that give each frame the most detail for that budget.</li>
+        <li>“Sharpest frames” lowers the frame rate before the resolution. AI models look at individual frames sampled from a video, so clear frames matter more than smooth motion.</li>
+        <li>Resolution is capped at 1080p, since models shrink larger frames anyway.</li>
+        <li>Speech audio is encoded as small mono AAC so more of the file goes to the picture.</li>
+        <li>If the encoder overshoots the limit, the file is re-encoded at a corrected bitrate so it always fits.</li>
+        <li>For very long videos, splitting into several files keeps each one sharp.</li>
+      </ul>
+    </details>
+  </main>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
