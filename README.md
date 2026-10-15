@@ -20,6 +20,10 @@ Everything runs locally in the browser with [WebCodecs](https://developer.mozill
 - **Guaranteed fit.** If the encoder overshoots the limit, that file is re-encoded at a corrected constant bitrate.
 - **Splitting.** "Auto" picks the fewest files that each stay at good quality and at least 720p.
 
+## Install on iPhone
+
+Open the page in Safari, tap **Share**, then **Add to Home Screen**. It opens full screen like an app and keeps working offline once loaded. After converting, **Share** sends the file straight to Photos, Files or the Claude app.
+
 ## Hosting
 
 It is a static site with no build step. To publish with GitHub Pages: **Settings → Pages → Deploy from a branch → `main` / root**. To run locally, serve the folder with any static server, e.g. `python3 -m http.server`, and open http://localhost:8000.

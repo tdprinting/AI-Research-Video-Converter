@@ -315,8 +315,18 @@ function addResult(name, { buffer, overLimit }, start, end) {
       <strong>${escapeHtml(name)}</strong>
       <span>${formatBytes(blob.size)} · ${formatTime(start)}–${formatTime(end)}</span>
       ${overLimit ? '<span class="warn">Still a little over the limit. Try a lower size setting.</span>' : ''}
-      <a class="button" href="${url}" download="${escapeHtml(name)}">Save</a>
+      <span class="buttons">
+        <button type="button" class="share secondary" hidden>Share</button>
+        <a class="button" href="${url}" download="${escapeHtml(name)}">Save</a>
+      </span>
     </div>`;
+  // On iPhone the share sheet can save straight to Photos or send to the Claude app.
+  const file = new File([blob], name, { type: 'video/mp4' });
+  const share = li.querySelector('.share');
+  if (navigator.canShare?.({ files: [file] })) {
+    share.hidden = false;
+    share.addEventListener('click', () => navigator.share({ files: [file] }).catch(() => {}));
+  }
   els.list.append(li);
 }
 
@@ -345,6 +355,11 @@ function showError(msg) { els.error.textContent = msg; els.error.hidden = false;
 function clearError() { els.error.hidden = true; }
 function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`); }
+
+// Lets the page open offline once it has been loaded, like an installed app.
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 
 // Exposed for automated tests.
 window.__converter = { state, loadFile, runJob, currentPlan, PRIORITIES };
