@@ -128,7 +128,11 @@ progress { width: 100%; height: 10px; margin-top: 16px; accent-color: var(--acce
 .results li { display: grid; gap: 10px; }
 .results video { width: 100%; max-height: 360px; background: #000; border-radius: 10px; }
 .results .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
-.results .meta .button { margin-left: auto; padding: 8px 18px; }
+.results .meta .buttons { margin-left: auto; display: flex; gap: 8px; }
+.results .meta .buttons > * { padding: 8px 18px; }
+@media (display-mode: standalone) {
+  main { padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+}
 
 .about summary { cursor: pointer; font-weight: 600; }
 .about ul { margin: 12px 0 0; padding-left: 20px; color: var(--muted); }
